@@ -1,0 +1,93 @@
+---
+title: "Homework 1"
+author: "Kossi Akplaka"
+date: "`r Sys.Date()`"
+output: openintro::lab_report
+---
+
+```{r load-packages, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(openintro)
+```
+
+ 
+In this assignment, I'll build the first letters for both my first and last name using point plots in R.  
+
+Since my name is Kossi Akplaka, I'll be building the letters K and A.
+
+## Build letters K and A
+
+Build the letter K
+```{r plot letter K}
+x=c(rep(0,500),seq(0,1,length.out=500), seq(0,1,length.out=500))
+y=c(seq(-1,1,length.out=500),seq(0,1,length.out=500), seq(0,-1,length.out=500))
+z=rbind(x,y)
+plot(y~x, xlim=c(-3,3), ylim=c(-3,3))
+```
+
+
+
+Build the letter A
+
+```{r build letter A}
+x=c(seq(-1,0,length.out=500),seq(0,1,length.out=500), seq(-.5,.5,length.out=500))
+y=c(seq(-1,1,length.out=500), seq(1,-1,length.out=500), rep(0,500))
+z=rbind(x,y)
+plot(y~x, xlim=c(-3,3), ylim=c(-3,3))
+```
+
+
+Build both letters K and A together in the same plot
+
+```{r}
+x=c(rep(-1,500),seq(-1,0,length.out=500), seq(-1,0,length.out=500),seq(1,2,length.out=500),seq(2,3,length.out=500), seq(1.5,2.5,length.out=500))
+
+y=c(seq(-1,1,length.out=500),seq(0,1,length.out=500), seq(0,-1,length.out=500),seq(-1,1,length.out=500), seq(1,-1,length.out=500), rep(0,500))
+
+z=rbind(x,y)
+plot(y~x, xlim=c(-3,3), ylim=c(-3,3))
+
+
+```
+
+
+
+Then, write R code that will left multiply (%*%) a square matrix (x) against each of the vectors of points (y). Initially, that square matrix will be the Identity matrix.  
+Use a loop that changes the transformation matrix incrementally to demonstrate 1) shear, 2) scaling, 3)  rotation , and 4) projection in animated fashion.  
+Hint:  Use x11() to open a new plotting window in R.
+
+```{r}
+# Function to plot the vectors
+plot_vectors <- function(vectors, title) {
+  plot(vectors[2, ], vectors[1, ], xlim = c(-3, 3), ylim = c(-5, 5),   pch = 20)
+}
+
+# Extend vectors to homogeneous coordinates
+z_homogeneous = rbind(z, rep(1, ncol(z)))
+
+# Identity matrix
+identity_matrix = matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 1), nrow = 3, byrow = TRUE)
+
+# Shear, scaling, Rotation, and Projection matrices
+shear_matrix = matrix(c(1, 0.5, 0, 0, 1, 0, 0, 0, 1), nrow = 3, byrow = TRUE)
+scaling_matrix = matrix(c(1.5, 0, 0, 0, 0.5, 0, 0, 0, 1), nrow = 3, byrow = TRUE)
+rotation_matrix = matrix(c(cos(pi/4), -sin(pi/4), 0, sin(pi/4), cos(pi/4), 0, 0, 0, 1), nrow = 3, byrow = TRUE)
+projection_matrix = matrix(c(1, 0, 0, 0, 1, 0, 0, 0, 0), nrow = 3, byrow = TRUE)
+
+# Combine all transformation matrices
+transformation_matrices = list(identity_matrix, shear_matrix, scaling_matrix, rotation_matrix, projection_matrix)
+titles = c("Identity Matrix", "Shear Matrix", "Scaling Matrix", "Rotation Matrix", "Projection Matrix")
+
+# Open a new plotting window
+x11()
+
+# Loop through each transformation matrix
+for (i in seq_along(transformation_matrices)) {
+  transformed_vectors = transformation_matrices[[i]] %*% z_homogeneous
+  plot_vectors(transformed_vectors, titles[i])
+  Sys.sleep(3)
+}
+
+```
+
+
